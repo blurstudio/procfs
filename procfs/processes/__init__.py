@@ -65,6 +65,22 @@ class environ(ProcessFile):
         return Dict(env)
 
 
+class sched(ProcessFile):
+    """/proc/<pid>/sched
+    """
+
+    def _parse(self, raw):
+        data = Dict()
+        schedReg = re.compile( '^([^0-9]+?)\s*:\s*([0-9.]+)\s*$' )
+        for line in raw.splitlines():
+            matched = schedReg.match( line )
+            if matched:
+                k,v = matched.groups()
+                k = k.replace('.','_')
+                data[k] = v
+        return data
+
+
 class status(ProcessFile):
     """/proc/<pid>/status
     """
